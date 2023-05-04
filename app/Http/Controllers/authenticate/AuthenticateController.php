@@ -12,7 +12,9 @@ class AuthenticateController extends Controller
 {
     
     /**
+     * Register API
      * 
+     * @param Illuminate\Contracts\Routing\ResponseFactory::json
      */
     public function register(Request $request)
     {
@@ -34,7 +36,9 @@ class AuthenticateController extends Controller
     }
 
     /**
+     * Login API
      * 
+     * @param Illuminate\Contracts\Routing\ResponseFactory::json
      */
     public function login(Request $request)
     {
