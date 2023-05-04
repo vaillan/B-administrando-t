@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\authenticate;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Validator;
-
 class AuthenticateController extends Controller
 {
     
@@ -23,15 +24,28 @@ class AuthenticateController extends Controller
         ]);
    
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json(['msg' => 'Validation Error.', 'errors' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);       
         }
    
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
-        $user = User::create($input);
-        $success['token'] =  $user->createToken('MyApp')->plainTextToken;
-        $success['name'] =  $user->name;
-   
-        return $this->sendResponse($success, 'User register successfully.');
+        User::create($input);
+        return response()->json(['msg' => 'User register successfully.']);
+    }
+
+    /**
+     * 
+     */
+    public function login(Request $request)
+    {
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+            $user = Auth::user(); 
+            $success['token'] =  $user->createToken('administrando-t')->plainTextToken; 
+            $success['name'] =  $user->name;
+            return response()->json(['autenticado' => $success, 'msg' => 'User login successfully.']);
+        } 
+        else{ 
+            return response()->json(['msg' => 'Unauthorised.'], Response::HTTP_UNAUTHORIZED);
+        } 
     }
 }
