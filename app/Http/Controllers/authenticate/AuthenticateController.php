@@ -22,16 +22,18 @@ class AuthenticateController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required',
-            'password_confirmed' => 'required|same:password',
+            'confirmed_password' => 'required|same:password',
         ]);
    
         if($validator->fails()){
             return response()->json(['msg' => 'Validation Error.', 'errors' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);       
         }
    
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        User::create($input);
+        $registerData = $request->all();
+        $registerData['password'] = bcrypt($registerData['password']);
+        $registerData['created_by'] = 1;
+        $registerData['updated_by'] = 1;
+        User::create($registerData);
         return response()->json(['msg' => 'User register successfully.']);
     }
 
