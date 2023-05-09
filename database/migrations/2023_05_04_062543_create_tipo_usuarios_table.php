@@ -17,9 +17,6 @@ class CreateTipoUsuariosTable extends Migration
             Schema::create('tipo_usuarios', function (Blueprint $table) {
                 $table->id();
                 $table->integer('tipo_usuario');
-    
-                $table->foreignId('created_by')->constrained('users')->nullable();
-                $table->foreignId('updated_by')->constrained('users')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
             });
