@@ -14,10 +14,10 @@ use App\Http\Controllers\authenticate\AuthenticateController;
 |
 */
 
-Route::post('register', [AuthenticateController::class, 'register']);
+Route::post('register', [AuthenticateController::class, 'signUp']);
 
-Route::post('login', [AuthenticateController::class, 'login']);
+Route::post('login', [AuthenticateController::class, 'logIn']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [AuthenticateController::class, 'signOut']);
+    Route::post('logout', [AuthenticateController::class, 'logOut']);
 });

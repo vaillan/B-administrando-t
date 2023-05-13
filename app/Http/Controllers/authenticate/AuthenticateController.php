@@ -24,7 +24,7 @@ class AuthenticateController extends Controller
      * 
      * @param Illuminate\Contracts\Routing\ResponseFactory::json
      */
-    public function register(Request $request)
+    public function signUp(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -52,7 +52,7 @@ class AuthenticateController extends Controller
      * 
      * @param Illuminate\Contracts\Routing\ResponseFactory::json
      */
-    public function login(Request $request)
+    public function logIn(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -80,7 +80,7 @@ class AuthenticateController extends Controller
      * 
      * @param Illuminate\Contracts\Routing\ResponseFactory::json
      */
-    public function signOut(Request $request) 
+    public function logOut(Request $request) 
     {
         $user = Auth::user();
         $user->tokens()->delete();
