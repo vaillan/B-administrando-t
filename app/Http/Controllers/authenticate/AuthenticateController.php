@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\authenticate;
 
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -27,12 +29,13 @@ class AuthenticateController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'unique:users|email|required',
+            'device_name' => 'required',
             'password' => 'required',
             'confirmed_password' => 'required|same:password',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['msg' => 'Validation Error.', 'errors' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
+            return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
         }
 
         $registerData = $request->all();
@@ -51,13 +54,37 @@ class AuthenticateController extends Controller
      */
     public function login(Request $request)
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-            $success['token'] =  $user->createToken('administrando-t')->plainTextToken;
-            $success['name'] =  $user->name;
-            return response()->json(['autenticado' => $success, 'msg' => 'User login successfully.']);
-        } else {
-            return response()->json(['msg' => 'Unauthorised.'], Response::HTTP_UNAUTHORIZED);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'device_name' => 'required',
+        ]);
+        $user = User::where('email', $request->email)->first();
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
+        $user->device_name = $request->input('device_name');
+        $user->save();
+        $token = $user->createToken($request->device_name)->plainTextToken;
+        $authData = [
+            'token' => $token,
+            'user' => $user
+        ];
+        return response()->json(['items' => $authData, 'type' => 'object']);
+    }
+
+    /**
+     * Logout API
+     * 
+     * @param Illuminate\Contracts\Routing\ResponseFactory::json
+     */
+    public function signOut(Request $request) 
+    {
+        $user = Auth::user();
+        $user->tokens()->delete();
+        $response = ['message' => 'You have been successfully logged out!'];
+        return response()->json($response, 200);
     }
 }

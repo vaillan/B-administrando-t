@@ -28,7 +28,8 @@ class User extends Authenticatable
         'address',
         'city',
         'country',
-        'image'
+        'image',
+        'device_name',
     ];
 
     /**
