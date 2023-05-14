@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\authenticate;
+namespace App\Http\Controllers\Api\authenticate;
 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
@@ -59,19 +59,23 @@ class AuthenticateController extends Controller
             'password' => 'required',
             'device_name' => 'required',
         ]);
+
         $user = User::where('email', $request->email)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-        $user->device_name = $request->input('device_name');
-        $user->save();
+
+        $user->update(['device_name' => $request->input('device_name')]);
+
         $token = $user->createToken($request->device_name)->plainTextToken;
+
         $authData = [
             'token' => $token,
             'user' => $user
         ];
+
         return response()->json(['items' => $authData, 'type' => 'object']);
     }
 
@@ -80,7 +84,7 @@ class AuthenticateController extends Controller
      * 
      * @param Illuminate\Contracts\Routing\ResponseFactory::json
      */
-    public function logOut(Request $request) 
+    public function logOut(Request $request)
     {
         $user = Auth::user();
         $user->tokens()->delete();

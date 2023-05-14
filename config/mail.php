@@ -45,6 +45,10 @@ return [
             'auth_mode' => null,
         ],
 
+        'mailtrap' => [
+            'transport' => 'mailtrap'
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],
