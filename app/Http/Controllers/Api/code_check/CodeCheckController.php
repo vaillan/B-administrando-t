@@ -19,7 +19,7 @@ class CodeCheckController extends Controller
     public function checkCode(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'code' => 'required|string|exists:reset_code_passwords',
+            'code' => 'required|exists:reset_code_passwords',
         ]);
 
         if ($validator->fails()) {
