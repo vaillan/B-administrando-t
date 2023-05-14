@@ -12,7 +12,7 @@ use Validator;
 class ResetPasswordController extends Controller
 {
     /**
-     * Change the password (Setp 3)
+     * Change the password
      *
      * @param  Illuminate\Http\Request $request
      * @return Illuminate\Contracts\Routing\ResponseFactory::json

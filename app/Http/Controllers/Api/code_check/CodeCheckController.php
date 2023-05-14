@@ -11,7 +11,7 @@ use Validator;
 class CodeCheckController extends Controller
 {
     /**
-     * Check if the code is exist and vaild one (Setp 2)
+     * Check if the code is exist and valid one
      *
      * @param  Illuminate\Http\Request $request
      * @return Illuminate\Contracts\Routing\ResponseFactory::json

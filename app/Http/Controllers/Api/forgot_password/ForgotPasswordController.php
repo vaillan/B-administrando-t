@@ -15,7 +15,7 @@ use Validator;
 class ForgotPasswordController extends Controller
 {
     /**
-     * Send random code to email of user to reset password (Setp 1)
+     * Send random code to email of user to reset password
      *
      * @param  Illuminate\Http\Request $request
      * @return Illuminate\Contracts\Routing\ResponseFactory::json
