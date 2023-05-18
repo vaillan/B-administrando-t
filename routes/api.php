@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\authenticate\AuthenticateController;
 use App\Http\Controllers\Api\forgot_password\ForgotPasswordController;
 use App\Http\Controllers\Api\code_check\CodeCheckController;
 use App\Http\Controllers\Api\reset_password\ResetPasswordController;
-
+use App\Http\Controllers\Api\tipo_ingresos\TipoIngresosController;
+use App\Http\Controllers\Api\ingresos\IngresosController;
+use App\Http\Controllers\Api\plazos\PlazosController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,4 +30,12 @@ Route::post('login', [AuthenticateController::class, 'logIn']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthenticateController::class, 'logOut']);
+    Route::apiResources(
+        [
+            'tipo_ingresos' => TipoIngresosController::class,
+            'plazos' => PlazosController::class,
+        ],
+        ['index', 'show']
+    );
+    Route::resource('ingresos', IngresosController::class);
 });
