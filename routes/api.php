@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\reset_password\ResetPasswordController;
 use App\Http\Controllers\Api\tipo_ingresos\TipoIngresosController;
 use App\Http\Controllers\Api\ingresos\IngresosController;
 use App\Http\Controllers\Api\plazos\PlazosController;
+use App\Http\Controllers\Api\presupuesto\PresupuestoController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
         [
             'tipo_ingresos' => TipoIngresosController::class,
             'plazos' => PlazosController::class,
+            'presupuesto' => PresupuestoController::class,
         ],
         ['index', 'show']
     );

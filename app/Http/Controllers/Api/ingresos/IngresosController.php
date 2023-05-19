@@ -45,11 +45,28 @@ class IngresosController extends Controller
             $montoIngreso = (int) filter_var($request->input('ingreso'), FILTER_SANITIZE_NUMBER_INT);
             $user_id = Auth::id();
             $ingreso = $request->all();
-            $ingreso['ingreso'] = $montoIngreso;
-            $ingreso['created_by'] = $user_id;
-            $ingreso['updated_by'] = $user_id;
-            Ingreso::create($ingreso);
-            return response()->json(['msg' => 'Ingreso creado correctamente.']);
+            $date = date('Y-m-d H:i:s');
+            $ingreso = Ingreso::updateOrCreate(
+                ['tipo_ingreso_id' => $ingreso['tipo_ingreso_id'], 'created_by' => $user_id,],
+                [
+                    'ingreso' => $montoIngreso,
+                    'updated_by' => $user_id,
+                    'plazo_id' => $ingreso['plazo_id']
+                ]
+            );
+
+            DB::table('presupuesto')->updateOrInsert(
+                ['ingreso_id' => $ingreso->id, 'usuario_id' => $user_id],
+                [
+                    'total' => $ingreso->ingreso,
+                    'created_at' => $date,
+                    'updated_at' => $date,
+                    'created_by' => $user_id,
+                    'updated_by' => $user_id,
+                ]
+            );
+
+            return response()->json(['msg' => 'Ingreso creado correctamente.', 'items' => $ingreso]);
         });
         return $query;
     }
