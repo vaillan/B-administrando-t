@@ -8,8 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Models\ingresos\Ingreso;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\periodos\Periodo;
+use App\Models\presupuesto\Presupuesto;
 use Validator;
-
 class IngresosController extends Controller
 {
     /**
@@ -35,7 +36,7 @@ class IngresosController extends Controller
             $validator = Validator::make($request->all(), [
                 'ingreso' => 'required',
                 'tipo_ingreso_id' => 'required',
-                'plazo_id' => 'required'
+                'periodo' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -46,21 +47,27 @@ class IngresosController extends Controller
             $user_id = Auth::id();
             $ingreso = $request->all();
             $date = date('Y-m-d H:i:s');
+
             $ingreso = Ingreso::updateOrCreate(
                 ['tipo_ingreso_id' => $ingreso['tipo_ingreso_id'], 'created_by' => $user_id,],
                 [
                     'ingreso' => $montoIngreso,
                     'updated_by' => $user_id,
-                    'plazo_id' => $ingreso['plazo_id']
                 ]
             );
 
-            DB::table('presupuesto')->updateOrInsert(
+            Periodo::updateOrCreate(
+                ['created_by' => $user_id, 'ingreso_id' => $ingreso->id],
+                [
+                    'updated_by' => $user_id,
+                    'periodo' => $request->periodo,
+                ]
+            );
+
+            Presupuesto::updateOrCreate(
                 ['ingreso_id' => $ingreso->id, 'usuario_id' => $user_id],
                 [
                     'total' => $ingreso->ingreso,
-                    'created_at' => $date,
-                    'updated_at' => $date,
                     'created_by' => $user_id,
                     'updated_by' => $user_id,
                 ]
@@ -102,6 +109,9 @@ class IngresosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Ingreso::find($id)->delete();
+        Periodo::where('ingreso_id', $id)->delete();
+        Presupuesto::where('ingreso_id',$id)->delete();
+        return response()->json(['type' => 'Object', 'items' => ['message' => 'Ingreso eliminado correctamente']]);
     }
 }

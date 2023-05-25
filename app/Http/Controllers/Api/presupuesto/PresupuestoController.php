@@ -41,7 +41,7 @@ class PresupuestoController extends Controller
     public function show($id)
     {
         $presupuesto = Presupuesto::with(['ingreso' => function ($query) {
-            $query->with(['plazo', 'tipoIngreso']);
+            $query->with(['tipoIngreso', 'periodo']);
         }])->where('usuario_id', $id)->get();
         return response()->json(['type' => 'array', 'items' => $presupuesto]);
     }

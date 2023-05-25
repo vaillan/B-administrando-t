@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\plazos;
+namespace App\Models\periodos;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class plazo extends Model
+class Periodo extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -16,9 +16,12 @@ class plazo extends Model
      *
      * @var string
      */
-    protected $table = 'plazos';
+    protected $table = 'periodos';
 
     protected $fillable = [
-        'plazo',
+        'ingreso_id',
+        'periodo',
+        'created_by',
+        'updated_by',
     ];
 }

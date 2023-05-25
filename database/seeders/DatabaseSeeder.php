@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
                 TipoUsuariosSeeder::class,
                 UsersSeeder::class,
                 TipoIngresosSeeder::class,
-                PlazosSeeder::class,
             ]
         );
     }

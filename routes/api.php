@@ -34,7 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResources(
         [
             'tipo_ingresos' => TipoIngresosController::class,
-            'plazos' => PlazosController::class,
             'presupuesto' => PresupuestoController::class,
         ],
         ['index', 'show']

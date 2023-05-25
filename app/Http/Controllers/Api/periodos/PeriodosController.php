@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\plazos;
+namespace App\Http\Controllers\Api\periodos;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class PlazosController extends Controller
+class PeriodosController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +14,7 @@ class PlazosController extends Controller
      */
     public function index()
     {
-        $plazos = DB::table('plazos')->whereNull('deleted_at')->get();
-        return response()->json(['type' => 'array', 'items' => $plazos]);
+        //
     }
 
     /**
