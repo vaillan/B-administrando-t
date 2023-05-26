@@ -15,7 +15,7 @@ class AddEtiquetaIdToListaArticulosTable extends Migration
     {
         if (Schema::hasTable('lista_articulos') && !Schema::hasColumn('lista_articulos', 'etiqueta_id')) {
             Schema::table('lista_articulos', function (Blueprint $table) {
-                $table->foreignId('etiqueta_id')->constrained('lista_articulos')->nullable();
+                $table->foreignId('etiqueta_id')->constrained('etiquetas')->nullable();
             });
         }
     }

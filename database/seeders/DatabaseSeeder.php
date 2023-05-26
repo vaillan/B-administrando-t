@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
                 TipoUsuariosSeeder::class,
                 UsersSeeder::class,
                 TipoIngresosSeeder::class,
+                ListaArticulosSeeder::class,
             ]
         );
     }
