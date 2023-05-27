@@ -8,7 +8,9 @@ use App\Http\Controllers\Api\code_check\CodeCheckController;
 use App\Http\Controllers\Api\reset_password\ResetPasswordController;
 use App\Http\Controllers\Api\tipo_ingresos\TipoIngresosController;
 use App\Http\Controllers\Api\ingresos\IngresosController;
-use App\Http\Controllers\Api\plazos\PlazosController;
+use App\Http\Controllers\Api\lista_articulos\CategoriasController;
+use App\Http\Controllers\Api\lista_articulos\EtiquetasController;
+use App\Http\Controllers\Api\lista_articulos\ListaArticulosController;
 use App\Http\Controllers\Api\presupuesto\PresupuestoController;
 /*
 |--------------------------------------------------------------------------
@@ -25,16 +27,20 @@ Route::post('forgot_password', [ForgotPasswordController::class, 'forgotPassword
 Route::post('check_code', [CodeCheckController::class, 'checkCode']);
 Route::post('reset_password', [ResetPasswordController::class, 'resetPassword']);
 
-#REGISTER ANS LOGIN API's
+#REGISTER AND LOGIN API's
 Route::post('register', [AuthenticateController::class, 'signUp']);
 Route::post('login', [AuthenticateController::class, 'logIn']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthenticateController::class, 'logOut']);
+    Route::get('articulos_espesificos/{etiqueta_id}/{categoria_id}', [ListaArticulosController::class, 'getArticulos']);
     Route::apiResources(
         [
             'tipo_ingresos' => TipoIngresosController::class,
             'presupuesto' => PresupuestoController::class,
+            'articulos' => ListaArticulosController::class,
+            'etiquetas' => EtiquetasController::class,
+            'categorias' => CategoriasController::class,
         ],
         ['index', 'show']
     );
