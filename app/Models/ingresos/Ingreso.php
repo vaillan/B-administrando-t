@@ -23,7 +23,6 @@ class Ingreso extends Model
     protected $fillable = [
         'ingreso',
         'tipo_ingreso_id',
-        'plazo_id',
         'created_by',
         'updated_by',
     ];

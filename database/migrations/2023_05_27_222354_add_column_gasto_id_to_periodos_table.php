@@ -15,7 +15,8 @@ class AddColumnGastoIdToPeriodosTable extends Migration
     {
         if (Schema::hasTable('periodos') && !Schema::hasColumn('periodos', 'gasto_id')) {
             Schema::table('periodos', function (Blueprint $table) {
-                $table->foreignId('gasto_id')->constrained('gastos')->nullable();
+                $table->unsignedBigInteger('gasto_id')->nullable();
+                $table->foreign('gasto_id')->references('id')->on('gastos');
             });
         }
     }

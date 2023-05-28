@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\periodos;
+namespace App\Models\reglas;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Periodo extends Model
+class ReglaAplicadaPresupuesto extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -16,12 +16,12 @@ class Periodo extends Model
      *
      * @var string
      */
-    protected $table = 'periodos';
+    protected $table = 'regla_aplicada_presupuesto';
 
     protected $fillable = [
-        'ingreso_id',
-        'periodo',
-        'gasto_id',
+        'regla_id',
+        'presupuesto_id',
+        'total',
         'created_by',
         'updated_by',
     ];

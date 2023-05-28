@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\periodos\Periodo;
 use App\Models\presupuesto\Presupuesto;
+use App\Models\reglas\Regla;
+use App\Models\reglas\ReglaAplicadaPresupuesto;
+
 use Validator;
+
 class IngresosController extends Controller
 {
     /**
@@ -46,7 +50,6 @@ class IngresosController extends Controller
             $montoIngreso = (int) filter_var($request->input('ingreso'), FILTER_SANITIZE_NUMBER_INT);
             $user_id = Auth::id();
             $ingreso = $request->all();
-            $date = date('Y-m-d H:i:s');
 
             $ingreso = Ingreso::updateOrCreate(
                 ['tipo_ingreso_id' => $ingreso['tipo_ingreso_id'], 'created_by' => $user_id,],
@@ -56,22 +59,11 @@ class IngresosController extends Controller
                 ]
             );
 
-            Periodo::updateOrCreate(
-                ['created_by' => $user_id, 'ingreso_id' => $ingreso->id],
-                [
-                    'updated_by' => $user_id,
-                    'periodo' => $request->periodo,
-                ]
-            );
+            $this->periodo($request, $ingreso, $user_id);
 
-            Presupuesto::updateOrCreate(
-                ['ingreso_id' => $ingreso->id, 'usuario_id' => $user_id],
-                [
-                    'total' => $ingreso->ingreso,
-                    'created_by' => $user_id,
-                    'updated_by' => $user_id,
-                ]
-            );
+            $presupuesto = $this->presupuesto($ingreso, $user_id);
+
+            $this->aplicarRegla($presupuesto, $user_id);
 
             return response()->json(['msg' => 'Ingreso creado correctamente.', 'items' => $ingreso]);
         });
@@ -86,7 +78,6 @@ class IngresosController extends Controller
      */
     public function show($id)
     {
-        //
     }
 
     /**
@@ -111,7 +102,57 @@ class IngresosController extends Controller
     {
         Ingreso::find($id)->delete();
         Periodo::where('ingreso_id', $id)->delete();
-        Presupuesto::where('ingreso_id',$id)->delete();
+        $presupuestos = Presupuesto::where('ingreso_id', $id)->get();
+        $presupuestos->each(function ($presupuesto) {
+            ReglaAplicadaPresupuesto::where('presupuesto_id', $presupuesto->id)->delete();
+            $presupuesto->delete();
+        });
         return response()->json(['type' => 'Object', 'items' => ['message' => 'Ingreso eliminado correctamente']]);
+    }
+
+    private function aplicarRegla($presupuesto, $user_id)
+    {
+        $reglas = Regla::all();
+        $reglas->each(function ($regla) use ($presupuesto, $user_id) {
+            ReglaAplicadaPresupuesto::updateOrCreate(
+                ['regla_id' => $regla->id, 'presupuesto_id' => $presupuesto->id],
+                [
+                    'total' => ($presupuesto->total * ($regla->porcentaje / 100)),
+                    'created_by' => $user_id,
+                    'updated_by' => $user_id,
+                ]
+            );
+        });
+    }
+
+    private function periodo(Request $request, $ingreso, $user_id)
+    {
+        Periodo::updateOrCreate(
+            ['created_by' => $user_id, 'ingreso_id' => $ingreso->id],
+            [
+                'updated_by' => $user_id,
+                'periodo' => $request->periodo,
+            ]
+        );
+    }
+
+    /**
+     * 
+     * @param $ingreso
+     * @param $user_id
+     * @return App\Models\presupuesto\Presupuesto
+     */
+    private function presupuesto($ingreso, $user_id)
+    {
+        $presupuesto = Presupuesto::updateOrCreate(
+            ['ingreso_id' => $ingreso->id, 'usuario_id' => $user_id],
+            [
+                'total' => $ingreso->ingreso,
+                'created_by' => $user_id,
+                'updated_by' => $user_id,
+            ]
+        );
+
+        return $presupuesto;
     }
 }
