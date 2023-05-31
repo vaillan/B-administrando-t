@@ -20,7 +20,7 @@ class UsersSeeder extends Seeder
             [
                 'name' => 'Valentin',
                 'last_name' => 'Ortiz Santiago',
-                'email' => 'orttizsantiago9303@gmail.com',
+                'email' => 'ortizsantiago9303@gmail.com',
                 'password' => bcrypt('misther13'),
                 'tipo_usuario_id' => 1,
                 'created_by' => 1,

@@ -13,26 +13,12 @@ class TipoIngresosSeeder extends Seeder
         $date = date('Y-m-d H:i:s');
         $this->tipo_ingresos = [
             [
-                'nombre_ingreso' => 'Sueldo/Honorarios',
+                'nombre_ingreso' => 'Sueldo/Honorarios/Prestaciones',
                 'created_by' => 1,
                 'updated_by' => 1,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
-            [
-                'nombre_ingreso' => 'Prestaciones',
-                'created_by' => 1,
-                'updated_by' => 1,
-                'created_at' => $date,
-                'updated_at' => $date,
-            ],
-            [
-                'nombre_ingreso' => 'Incentivos',
-                'created_by' => 1,
-                'updated_by' => 1,
-                'created_at' => $date,
-                'updated_at' => $date,
-            ]
         ];
     }
     /**

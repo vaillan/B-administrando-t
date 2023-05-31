@@ -17,8 +17,9 @@ class CreatePeriodosTable extends Migration
             Schema::create('periodos', function (Blueprint $table) {
                 $table->id();
                 $table->date('periodo');
-                
-                $table->foreignId('ingreso_id')->constrained('ingresos')->nullable();
+
+                $table->unsignedBigInteger('ingreso_id')->nullable();
+                $table->foreign('ingreso_id')->references('id')->on('ingresos');
 
                 $table->foreignId('created_by')->constrained('users')->nullable();
                 $table->foreignId('updated_by')->constrained('users')->nullable();

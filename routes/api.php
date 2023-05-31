@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\lista_articulos\CategoriasController;
 use App\Http\Controllers\Api\lista_articulos\EtiquetasController;
 use App\Http\Controllers\Api\lista_articulos\ListaArticulosController;
 use App\Http\Controllers\Api\presupuesto\PresupuestoController;
+use App\Http\Controllers\Api\reglas\ReglaAplicadaPresupuestoController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,6 +37,8 @@ Route::post('login', [AuthenticateController::class, 'logIn']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthenticateController::class, 'logOut']);
     Route::get('articulos_espesificos/{etiqueta_id}/{categoria_id}', [ListaArticulosController::class, 'getArticulos']);
+    Route::post('regla_aplicada_presupuesto', [ReglaAplicadaPresupuestoController::class, 'getReglaAplicadaPresupuesto']);
+    Route::apiResource('gastos', GastosController::class);
     Route::apiResources(
         [
             'tipo_ingresos' => TipoIngresosController::class,

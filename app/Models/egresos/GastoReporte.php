@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Models\reglas;
+namespace App\Models\egresos;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\reglas\Regla;
 
-class ReglaAplicadaPresupuesto extends Model
+class GastoReporte extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -17,18 +16,13 @@ class ReglaAplicadaPresupuesto extends Model
      *
      * @var string
      */
-    protected $table = 'regla_aplicada_presupuesto';
+    protected $table = 'gastos_reporte';
 
     protected $fillable = [
-        'regla_id',
-        'presupuesto_id',
         'total',
+        'regla_aplicada_presupuesto_id',
+        'gasto_id',
         'created_by',
         'updated_by',
     ];
-
-    public function regla()
-    {
-        return $this->hasOne(Regla::class, 'id', 'regla_id');
-    }
 }

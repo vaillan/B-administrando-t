@@ -12,9 +12,10 @@ class ReglasSeeder extends Seeder
     public function __construct()
     {
         $date = date('Y-m-d H:i:s');
-        $this->reglas = [
+        $this->reglas = collect([
             [
-                'porcentaje' => 20.00,
+                'porcentaje' => 50.00,
+                'nombre_regla' => 'Fijos/Deudas',
                 'created_by' => 1,
                 'updated_by' => 1,
                 'created_at' => $date,
@@ -22,13 +23,7 @@ class ReglasSeeder extends Seeder
             ],
             [
                 'porcentaje' => 30.00,
-                'created_by' => 1,
-                'updated_by' => 1,
-                'created_at' => $date,
-                'updated_at' => $date,
-            ],
-            [
-                'porcentaje' => 30.00,
+                'nombre_regla' => 'Gustos',
                 'created_by' => 1,
                 'updated_by' => 1,
                 'created_at' => $date,
@@ -36,14 +31,15 @@ class ReglasSeeder extends Seeder
             ],
             [
                 'porcentaje' => 20.00,
+                'nombre_regla' => 'Ahorros',
                 'created_by' => 1,
                 'updated_by' => 1,
                 'created_at' => $date,
                 'updated_at' => $date,
             ]
-        ];
+        ]);
     }
-    
+
     /**
      * Run the database seeds.
      *
@@ -56,6 +52,8 @@ class ReglasSeeder extends Seeder
 
     private function crearReglas()
     {
-        DB::table('reglas')->insert($this->reglas);
+        $this->reglas->each(function ($regla) {
+            DB::table('reglas')->insert($regla);
+        });
     }
 }
