@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\ingresos\TipoIngreso;
 use App\Models\periodos\Periodo;
+use App\Models\presupuesto\Presupuesto;
 
 class Ingreso extends Model
 {
@@ -35,5 +36,10 @@ class Ingreso extends Model
     public function periodo()
     {
         return $this->hasOne(Periodo::class, 'ingreso_id');
+    }
+
+    public function presupuesto()
+    {
+        return $this->belongsTo(Presupuesto::class, 'id','ingreso_id');
     }
 }

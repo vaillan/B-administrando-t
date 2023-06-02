@@ -12,7 +12,7 @@ use App\Models\periodos\Periodo;
 use App\Models\presupuesto\Presupuesto;
 use App\Models\reglas\Regla;
 use App\Models\reglas\ReglaAplicadaPresupuesto;
-
+use App\Models\egresos\GastoReporte;
 use Validator;
 
 class IngresosController extends Controller
@@ -49,15 +49,12 @@ class IngresosController extends Controller
 
             $montoIngreso = (int) filter_var($request->input('ingreso'), FILTER_SANITIZE_NUMBER_INT);
             $user_id = Auth::id();
-            $ingreso = $request->all();
+            $ingresoData = $request->all();
+            $ingresoData['ingreso'] = $montoIngreso;
+            $ingresoData['created_by'] = $user_id;
+            $ingresoData['updated_by'] = $user_id;
 
-            $ingreso = Ingreso::updateOrCreate(
-                ['tipo_ingreso_id' => $ingreso['tipo_ingreso_id'], 'created_by' => $user_id,],
-                [
-                    'ingreso' => $montoIngreso,
-                    'updated_by' => $user_id,
-                ]
-            );
+            $ingreso = Ingreso::create($ingresoData);
 
             $this->periodo($request, $ingreso, $user_id);
 
@@ -104,9 +101,14 @@ class IngresosController extends Controller
         Periodo::where('ingreso_id', $id)->delete();
         $presupuestos = Presupuesto::where('ingreso_id', $id)->get();
         $presupuestos->each(function ($presupuesto) {
-            ReglaAplicadaPresupuesto::where('presupuesto_id', $presupuesto->id)->delete();
+            $reglaAplicadaPresupuesto = ReglaAplicadaPresupuesto::where('presupuesto_id', $presupuesto->id)->first();
+            $gastoReporte = GastoReporte::with('gasto')->where('regla_aplicada_presupuesto_id', $reglaAplicadaPresupuesto->id)->first();
+            $gastoReporte->gasto->delete();
+            $gastoReporte->delete();
             $presupuesto->delete();
+            $reglaAplicadaPresupuesto->delete();
         });
+
         return response()->json(['type' => 'Object', 'items' => ['message' => 'Ingreso eliminado correctamente']]);
     }
 
@@ -127,13 +129,11 @@ class IngresosController extends Controller
 
     private function periodo(Request $request, $ingreso, $user_id)
     {
-        Periodo::updateOrCreate(
-            ['created_by' => $user_id, 'ingreso_id' => $ingreso->id],
-            [
-                'updated_by' => $user_id,
-                'periodo' => $request->periodo,
-            ]
-        );
+        $periodoData = $request->all();
+        $periodoData['ingreso_id'] = $ingreso->id;
+        $periodoData['created_by'] = $user_id;
+        $periodoData['updated_by'] = $user_id;
+        Periodo::create($periodoData);
     }
 
     /**
@@ -144,15 +144,14 @@ class IngresosController extends Controller
      */
     private function presupuesto($ingreso, $user_id)
     {
-        $presupuesto = Presupuesto::updateOrCreate(
-            ['ingreso_id' => $ingreso->id, 'usuario_id' => $user_id],
-            [
-                'total' => $ingreso->ingreso,
-                'created_by' => $user_id,
-                'updated_by' => $user_id,
-            ]
-        );
-
+        $presupuestoData = [
+            'total' => $ingreso->ingreso,
+            'ingreso_id' => $ingreso->id, 
+            'usuario_id' => $user_id,
+            'created_by' => $user_id,
+            'updated_by' => $user_id,
+        ];
+        $presupuesto = Presupuesto::create($presupuestoData);
         return $presupuesto;
     }
 }

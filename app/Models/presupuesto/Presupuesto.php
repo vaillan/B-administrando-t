@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\ingresos\Ingreso;
+use App\Models\reglas\ReglaAplicadaPresupuesto;
+
 class Presupuesto extends Model
 {
     use HasFactory;
@@ -38,5 +40,10 @@ class Presupuesto extends Model
     public function ingreso()
     {
         return $this->hasOne(Ingreso::class, 'id', 'ingreso_id');
+    }
+
+    public function reglaAplicadaPresupuesto()
+    {
+        return $this->hasMany(ReglaAplicadaPresupuesto::class, 'presupuesto_id');
     }
 }

@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Api\reglas;
 
 use App\Http\Controllers\Controller;
+use App\Models\ingresos\Ingreso;
 use Illuminate\Http\Request;
 use App\Models\reglas\ReglaAplicadaPresupuesto;
-
+use App\Models\periodos\Periodo;
+use Illuminate\Support\Facades\Auth;
+use App\Models\presupuesto\Presupuesto;
+use Carbon\Carbon;
 class ReglaAplicadaPresupuestoController extends Controller
 {
     /**
@@ -64,8 +68,16 @@ class ReglaAplicadaPresupuestoController extends Controller
 
     public function getReglaAplicadaPresupuesto(Request $request)
     {
-        $reglas = ReglaAplicadaPresupuesto::with('regla')
-        ->whereIn('regla_id', $request->input('regla_ids'))->get();
-        return response()->json(['type' => 'array', 'items' => $reglas, 'name' => 'regla_aplicada_presupuesto']);
+        $user_id = Auth::id();
+        $periodo = Carbon::parse($request->input('periodo'))->format('Y-m');
+        $ingreso = Ingreso::with(['periodo','presupuesto' => function ($query){
+            $query->with(['reglaAplicadaPresupuesto' => function ($query) {
+                $query->with('regla');
+            }]);
+        }])->where('created_by', $user_id)->get()->filter(function ($ingreso) use ($periodo) {
+            return Carbon::parse($ingreso->periodo->periodo)->format('Y-m') === $periodo;
+        });
+
+        return response()->json(['type' => 'array', 'items' => $ingreso, 'name' => 'regla_aplicada_presupuesto']);
     }
 }

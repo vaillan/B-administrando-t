@@ -2,6 +2,7 @@
 
 namespace App\Models\egresos;
 
+use App\Models\periodos\Periodo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,4 +25,9 @@ class Gasto extends Model
         'created_by',
         'updated_by',
     ];
+
+    public function periodo()
+    {
+        return $this->hasOne(Periodo::class, 'gasto_id');
+    }
 }

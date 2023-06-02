@@ -4,6 +4,7 @@ namespace App\Models\egresos;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\egresos\Gasto;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GastoReporte extends Model
@@ -25,4 +26,8 @@ class GastoReporte extends Model
         'created_by',
         'updated_by',
     ];
+
+    public function gasto() {
+        return $this->hasOne(Gasto::class, 'id','gasto_id');
+    }
 }
