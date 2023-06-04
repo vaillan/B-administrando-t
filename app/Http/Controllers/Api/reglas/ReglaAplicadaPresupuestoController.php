@@ -75,7 +75,7 @@ class ReglaAplicadaPresupuestoController extends Controller
                 $query->with('regla');
             }]);
         }])->where('created_by', $user_id)->get()->filter(function ($ingreso) use ($periodo) {
-            return Carbon::parse($ingreso->periodo->periodo)->format('Y-m') === $periodo;
+            return $ingreso->periodo->periodo === $periodo;
         });
 
         return response()->json(['type' => 'array', 'items' => $ingreso, 'name' => 'regla_aplicada_presupuesto']);

@@ -16,7 +16,7 @@ class CreatePeriodosTable extends Migration
         if (!Schema::hasTable('periodos')) {
             Schema::create('periodos', function (Blueprint $table) {
                 $table->id();
-                $table->date('periodo');
+                $table->string('periodo');
 
                 $table->unsignedBigInteger('ingreso_id')->nullable();
                 $table->foreign('ingreso_id')->references('id')->on('ingresos');

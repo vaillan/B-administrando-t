@@ -97,19 +97,24 @@ class IngresosController extends Controller
      */
     public function destroy($id)
     {
-        Ingreso::find($id)->delete();
-        Periodo::where('ingreso_id', $id)->delete();
-        $presupuestos = Presupuesto::where('ingreso_id', $id)->get();
-        $presupuestos->each(function ($presupuesto) {
-            $reglaAplicadaPresupuesto = ReglaAplicadaPresupuesto::where('presupuesto_id', $presupuesto->id)->first();
-            $gastoReporte = GastoReporte::with('gasto')->where('regla_aplicada_presupuesto_id', $reglaAplicadaPresupuesto->id)->first();
-            $gastoReporte->gasto->delete();
-            $gastoReporte->delete();
+        $query = DB::transaction(function () use ($id) {
+            Ingreso::find($id)->delete();
+            Periodo::where('ingreso_id', $id)->delete();
+            $presupuesto = Presupuesto::where('ingreso_id', $id)->first();
+            $reglaAplicadaPresupuesto = ReglaAplicadaPresupuesto::where('presupuesto_id', $presupuesto->id)->get();
+            $reglaAplicadaPresupuesto->each(function ($reglaAplicada) {
+                $gastoReportes = GastoReporte::with('gasto')->where('regla_aplicada_presupuesto_id', $reglaAplicada->id)->get();
+                $gastoReportes->each(function ($gastoReporte) {
+                    if(isset($gastoReporte->gasto)) $gastoReporte->gasto->delete();
+                    $gastoReporte->delete();
+                });
+                $reglaAplicada->delete();
+            });
             $presupuesto->delete();
-            $reglaAplicadaPresupuesto->delete();
-        });
 
-        return response()->json(['type' => 'Object', 'items' => ['message' => 'Ingreso eliminado correctamente']]);
+            return response()->json(['type' => 'Object', 'items' => ['message' => 'Ingreso eliminado correctamente']]);
+        });
+        return $query;
     }
 
     private function aplicarRegla($presupuesto, $user_id)
@@ -146,7 +151,7 @@ class IngresosController extends Controller
     {
         $presupuestoData = [
             'total' => $ingreso->ingreso,
-            'ingreso_id' => $ingreso->id, 
+            'ingreso_id' => $ingreso->id,
             'usuario_id' => $user_id,
             'created_by' => $user_id,
             'updated_by' => $user_id,
