@@ -23,7 +23,20 @@ class GastosController extends Controller
      */
     public function index()
     {
-        //
+        $grupoGastos = collect();
+        $gasto = Gasto::with(['periodo' => function ($query) {
+            $query->select('id', 'gasto_id', 'periodo');
+        }, 'articulo' => function ($query) {
+            $query->select('id', 'nombre_articulo');
+        }])
+            ->select('id', 'lista_articulo_id', 'total')
+            ->get()->groupBy('periodo.periodo');
+
+        $gasto->each(function ($gasto, $key) use (&$grupoGastos) {
+            $grupoGastos->push(['periodo' => $key, 'gasto' => $gasto]);
+        });
+
+        return response()->json(['type' => 'array', 'items' => $grupoGastos, 'name' => 'gastos']);
     }
 
     /**
@@ -51,13 +64,13 @@ class GastosController extends Controller
 
             $ajustes = $this->ajustesPresupuestoIngreso($request, $gastoTotal);
 
-            if($ajustes['type'] === 'error') {
+            if ($ajustes['type'] === 'error') {
                 return response()->json($ajustes, Response::HTTP_PRECONDITION_FAILED);
             }
 
             $gasto = Gasto::create(
                 [
-                    'total' => $gastoTotal, 
+                    'total' => $gastoTotal,
                     'lista_articulo_id' => $request->input('lista_articulo_id'),
                     'created_by' => $user_id,
                     'updated_by' => $user_id
@@ -137,7 +150,7 @@ class GastosController extends Controller
         $reglaAplicadaPresupuesto = ReglaAplicadaPresupuesto::find($request->input('regla_aplicada_presupuesto_id'));
         $presupuesto = Presupuesto::with(['ingreso'])->find($reglaAplicadaPresupuesto->presupuesto_id);
         $diferenciaReglaAplicada = $reglaAplicadaPresupuesto->total - $gastoTotal;
-        if($diferenciaReglaAplicada < 0) {
+        if ($diferenciaReglaAplicada < 0) {
             return ['type' => 'error', 'items' => ['msg' => 'Sobrepasa el presupuesto seleccionado', 'presupuesto' => $reglaAplicadaPresupuesto]];
         }
         $reglaAplicadaPresupuesto->total = $diferenciaReglaAplicada;
