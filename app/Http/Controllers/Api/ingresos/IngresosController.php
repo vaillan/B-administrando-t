@@ -98,19 +98,25 @@ class IngresosController extends Controller
     public function destroy($id)
     {
         $query = DB::transaction(function () use ($id) {
-            Ingreso::find($id)->delete();
-            Periodo::where('ingreso_id', $id)->delete();
-            $presupuesto = Presupuesto::where('ingreso_id', $id)->first();
-            $reglaAplicadaPresupuesto = ReglaAplicadaPresupuesto::where('presupuesto_id', $presupuesto->id)->get();
-            $reglaAplicadaPresupuesto->each(function ($reglaAplicada) {
-                $gastoReportes = GastoReporte::with('gasto')->where('regla_aplicada_presupuesto_id', $reglaAplicada->id)->get();
-                $gastoReportes->each(function ($gastoReporte) {
-                    if(isset($gastoReporte->gasto)) $gastoReporte->gasto->delete();
+            $ingreso = Ingreso::with(['periodo', 'presupuesto' => function ($query) {
+                $query->with(['reglaAplicadaPresupuesto' => function ($query) {
+                    $query->with(['gastosReporte' => function ($query) {
+                        $query->with('gasto');
+                    }]);
+                }]);
+            }])->find($id);
+
+            $ingreso->presupuesto->reglaAplicadaPresupuesto->each(function ($reglaAplicada) {
+                $reglaAplicada->gastosReporte->each(function ($gastoReporte) {
                     $gastoReporte->delete();
+                    $gastoReporte->gasto->delete();
                 });
                 $reglaAplicada->delete();
             });
-            $presupuesto->delete();
+
+            $ingreso->presupuesto->delete();
+            $ingreso->periodo->delete();
+            $ingreso->delete();
 
             return response()->json(['type' => 'Object', 'items' => ['message' => 'Ingreso eliminado correctamente']]);
         });

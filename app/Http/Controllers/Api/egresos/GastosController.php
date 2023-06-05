@@ -49,16 +49,24 @@ class GastosController extends Controller
             $gastoTotal = (int) filter_var($request->input('total'), FILTER_SANITIZE_NUMBER_INT);
             $user_id = Auth::id();
 
-            $gasto = Gasto::updateOrCreate(
-                ['lista_articulo_id' => $request->input('lista_articulo_id'), 'created_by' => $user_id],
-                ['total' => $gastoTotal, 'updated_by' => $user_id]
+            $ajustes = $this->ajustesPresupuestoIngreso($request, $gastoTotal);
+
+            if($ajustes['type'] === 'error') {
+                return response()->json($ajustes, Response::HTTP_PRECONDITION_FAILED);
+            }
+
+            $gasto = Gasto::create(
+                [
+                    'total' => $gastoTotal, 
+                    'lista_articulo_id' => $request->input('lista_articulo_id'),
+                    'created_by' => $user_id,
+                    'updated_by' => $user_id
+                ]
             );
 
             $this->gastoReporte($request, $gasto, $gastoTotal, $user_id);
 
             $this->periodo($request, $gasto, $user_id);
-
-            $this->ajustesPresupuestoIngreso($request, $gastoTotal);
 
             return response()->json(['type' => 'object', 'items' => ['msg' => 'Gasto aplicado correctamente'], 'name' => 'gastos']);
         });
@@ -101,12 +109,10 @@ class GastosController extends Controller
 
     private function gastoReporte(Request $request, $gastoModel, $gastoTotal, $user_id)
     {
-        GastoReporte::updateOrCreate(
+        GastoReporte::create(
             [
                 'regla_aplicada_presupuesto_id' => $request->input('regla_aplicada_presupuesto_id'),
-                'gasto_id' => $gastoModel->id
-            ],
-            [
+                'gasto_id' => $gastoModel->id,
                 'total' => $gastoTotal,
                 'created_by' => $user_id,
                 'updated_by' => $user_id
@@ -116,11 +122,12 @@ class GastosController extends Controller
 
     private function periodo(Request $request, $gastoModel, $user_id)
     {
-        Periodo::updateOrCreate(
-            ['created_by' => $user_id, 'gasto_id' => $gastoModel->id],
+        Periodo::create(
             [
-                'updated_by' => $user_id,
                 'periodo' => $request->input('periodo'),
+                'gasto_id' => $gastoModel->id,
+                'created_by' => $user_id,
+                'updated_by' => $user_id,
             ]
         );
     }
@@ -128,12 +135,17 @@ class GastosController extends Controller
     private function ajustesPresupuestoIngreso(Request $request, $gastoTotal)
     {
         $reglaAplicadaPresupuesto = ReglaAplicadaPresupuesto::find($request->input('regla_aplicada_presupuesto_id'));
-        $presupuesto = Presupuesto::with('ingreso')->find($reglaAplicadaPresupuesto->presupuesto_id);
-        $reglaAplicadaPresupuesto->total = $reglaAplicadaPresupuesto->total - $gastoTotal;
+        $presupuesto = Presupuesto::with(['ingreso'])->find($reglaAplicadaPresupuesto->presupuesto_id);
+        $diferenciaReglaAplicada = $reglaAplicadaPresupuesto->total - $gastoTotal;
+        if($diferenciaReglaAplicada < 0) {
+            return ['type' => 'error', 'items' => ['msg' => 'Sobrepasa el presupuesto seleccionado', 'presupuesto' => $reglaAplicadaPresupuesto]];
+        }
+        $reglaAplicadaPresupuesto->total = $diferenciaReglaAplicada;
         $presupuesto->ingreso->ingreso = $presupuesto->ingreso->ingreso - $gastoTotal;
         $presupuesto->total = $presupuesto->total - $gastoTotal;
         $presupuesto->ingreso->save();
         $presupuesto->save();
         $reglaAplicadaPresupuesto->save();
+        return ['type' => 'success', 'items' => $diferenciaReglaAplicada];
     }
 }
