@@ -29,14 +29,21 @@ class GastosController extends Controller
         }, 'articulo' => function ($query) {
             $query->select('id', 'nombre_articulo');
         }])
+            ->where('created_by', Auth::id())
             ->select('id', 'lista_articulo_id', 'total')
             ->get()->groupBy('periodo.periodo');
 
         $gasto->each(function ($gasto, $key) use (&$grupoGastos) {
-            $grupoGastos->push(['periodo' => $key, 'gasto' => $gasto]);
+            $grupoGastos->push(
+                [
+                    'periodo' => $key,
+                    'total' => $gasto->sum('total'),
+                    'gasto' => $gasto
+                ]
+            );
         });
 
-        return response()->json(['type' => 'array', 'items' => $grupoGastos, 'name' => 'gastos']);
+        return response()->json(['type' => 'array', 'items' => $grupoGastos->sortBy(['periodo', 'desc']), 'name' => 'gastos']);
     }
 
     /**

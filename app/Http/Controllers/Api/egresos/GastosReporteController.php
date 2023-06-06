@@ -77,6 +77,6 @@ class GastosReporteController extends Controller
             ]);
         });
 
-        return response()->json(['type' => 'array', 'items' => $gastoPorPeriodo]);
+        return response()->json(['type' => 'array', 'items' => $gastoPorPeriodo->sortBy(['periodo', 'desc'])]);
     }
 }
