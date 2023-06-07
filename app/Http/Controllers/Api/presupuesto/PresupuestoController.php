@@ -40,10 +40,20 @@ class PresupuestoController extends Controller
      */
     public function show($id)
     {
+        $presupuestoReporte = collect();
         $presupuesto = Presupuesto::with(['ingreso' => function ($query) {
             $query->with(['tipoIngreso', 'periodo']);
-        }])->where('usuario_id', $id)->get();
-        return response()->json(['type' => 'array', 'items' => $presupuesto->sortBy(['ingreso.periodo.periodo', 'desc'])]);
+        }])->where('usuario_id', $id)->get()->groupBy('ingreso.periodo.periodo');
+
+        $presupuesto->each(function ($presupuesto, $presupuestoKey) use (&$presupuestoReporte) {
+            $presupuestoReporte->push([
+                'periodo' => $presupuestoKey,
+                'total' => $presupuesto->sum('total'),
+                'presupuesto' => $presupuesto
+            ]);
+        });
+
+        return response()->json(['type' => 'array', 'items' => $presupuestoReporte->sortBy(['periodo', 'desc']), 'name' => 'presupuesto']);
     }
 
     /**
