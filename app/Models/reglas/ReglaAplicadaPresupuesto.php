@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\reglas\Regla;
 use App\Models\egresos\GastoReporte;
+use App\Models\presupuesto\Presupuesto;
+
 class ReglaAplicadaPresupuesto extends Model
 {
     use HasFactory;
@@ -35,5 +37,10 @@ class ReglaAplicadaPresupuesto extends Model
     public function gastosReporte()
     {
         return $this->hasMany(GastoReporte::class, 'regla_aplicada_presupuesto_id');
+    }
+
+    public function presupuesto()
+    {
+        return $this->hasOne(Presupuesto::class, 'id', 'presupuesto_id');
     }
 }

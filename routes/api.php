@@ -48,7 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
             'articulos' => ListaArticulosController::class,
             'etiquetas' => EtiquetasController::class,
             'categorias' => CategoriasController::class,
-            'gastos' => GastosController::class,
         ],
         ['index', 'show']
     );

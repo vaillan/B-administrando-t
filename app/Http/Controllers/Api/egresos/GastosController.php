@@ -101,7 +101,6 @@ class GastosController extends Controller
      */
     public function show($id)
     {
-        //
     }
 
     /**
@@ -124,7 +123,26 @@ class GastosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $gasto = Gasto::with([
+            'reglaAplicadaPresupuesto' => function ($query) {
+                $query->with(['presupuesto' => function ($query) {
+                    $query->with('ingreso');
+                }]);
+            },
+            'gastoReporte',
+            'periodo'
+        ])->find($id);
+        $rembolso = $gasto->total;
+        $gasto->reglaAplicadaPresupuesto->total += $rembolso;
+        $gasto->reglaAplicadaPresupuesto->presupuesto->total += $rembolso;
+        $gasto->reglaAplicadaPresupuesto->presupuesto->ingreso->ingreso += $rembolso;
+        $gasto->reglaAplicadaPresupuesto->presupuesto->save();
+        $gasto->reglaAplicadaPresupuesto->presupuesto->ingreso->save();
+        $gasto->reglaAplicadaPresupuesto->save();
+        $gasto->gastoReporte->delete();
+        $gasto->periodo->delete();
+        $gasto->delete();
+        return response()->json(['type' => 'object', 'items' => ['msg' => 'Gasto elimido correctamente']]);
     }
 
     private function gastoReporte(Request $request, $gastoModel, $gastoTotal, $user_id)

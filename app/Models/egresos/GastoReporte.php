@@ -5,6 +5,7 @@ namespace App\Models\egresos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\egresos\Gasto;
+use App\Models\reglas\ReglaAplicadaPresupuesto;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GastoReporte extends Model
@@ -29,5 +30,10 @@ class GastoReporte extends Model
 
     public function gasto() {
         return $this->hasOne(Gasto::class, 'id','gasto_id');
+    }
+
+    public function reglaAplicadaPresupuesto()
+    {
+        return $this->hasOne(ReglaAplicadaPresupuesto::class, 'id', 'regla_aplicada_presupuesto_id');
     }
 }
