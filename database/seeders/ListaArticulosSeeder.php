@@ -38,7 +38,6 @@ class ListaArticulosSeeder extends Seeder
                     'Seguro de vida',
                     'Seguro GMM',
                     'Suguro para el retiro',
-                    'Otros',
                 ],
 
                 'Deudas' => [
@@ -47,7 +46,6 @@ class ListaArticulosSeeder extends Seeder
                     'Tarjetas de crédito',
                     'Préstamos',
                     'Empeños',
-                    'Otros',
                 ],
             ],
 
@@ -58,7 +56,6 @@ class ListaArticulosSeeder extends Seeder
                     'Cine',
                     'Conciertos',
                     'Restaurantes',
-                    'Otros',
                 ],
 
                 'Centaveros' => [
@@ -68,7 +65,6 @@ class ListaArticulosSeeder extends Seeder
                     'Alcohol',
                     'Refrescos',
                     'Dulces',
-                    'Otros',
                 ],
 
             ],
