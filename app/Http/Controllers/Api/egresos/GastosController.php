@@ -13,6 +13,7 @@ use App\Models\reglas\ReglaAplicadaPresupuesto;
 use App\Models\egresos\GastoReporte;
 use App\Models\presupuesto\Presupuesto;
 use Validator;
+use Carbon\Carbon;
 
 class GastosController extends Controller
 {
@@ -31,7 +32,8 @@ class GastosController extends Controller
         }])
             ->where('created_by', Auth::id())
             ->select('id', 'lista_articulo_id', 'total')
-            ->get()->groupBy('periodo.periodo');
+            ->get()
+            ->groupBy('periodo.periodo');
 
         $gasto->each(function ($gasto, $key) use (&$grupoGastos) {
             $grupoGastos->push(
@@ -132,6 +134,7 @@ class GastosController extends Controller
             'gastoReporte',
             'periodo'
         ])->find($id);
+
         $rembolso = $gasto->total;
         $gasto->reglaAplicadaPresupuesto->total += $rembolso;
         $gasto->reglaAplicadaPresupuesto->presupuesto->total += $rembolso;
@@ -185,5 +188,38 @@ class GastosController extends Controller
         $presupuesto->save();
         $reglaAplicadaPresupuesto->save();
         return ['type' => 'success', 'items' => $diferenciaReglaAplicada];
+    }
+
+    public function getGastosPorperiodo(Request $request)
+    {
+        $grupoGastos = collect();
+        $periodo = Carbon::parse($request->input('periodo'))->format('Y');
+        $gasto = Gasto::with(['periodo' => function ($query) {
+            $query->select('id', 'gasto_id', 'periodo');
+        }, 'articulo' => function ($query) {
+            $query->select('id', 'nombre_articulo');
+        }])
+            ->where('created_by', Auth::id())
+            ->select('id', 'lista_articulo_id', 'total')
+            ->get()
+            ->sortBy(['periodo.periodo', 'desc'])
+            ->groupBy('periodo.periodo')
+            ->filter(function ($gasto, $keyGasto) use ($periodo) {
+                if (Carbon::parse($keyGasto)->format('Y') === $periodo) {
+                    return $gasto;
+                }
+            });
+
+        $gasto->each(function ($gasto, $key) use (&$grupoGastos) {
+            $grupoGastos->push(
+                [
+                    'periodo' => $key,
+                    'total' => $gasto->sum('total'),
+                    'gasto' => $gasto
+                ]
+            );
+        });
+
+        return response()->json(['type' => 'array', 'items' => $grupoGastos, 'name' => 'gastos']);
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\forgot_password\ForgotPasswordController;
 use App\Http\Controllers\Api\code_check\CodeCheckController;
 use App\Http\Controllers\Api\egresos\GastosController;
 use App\Http\Controllers\Api\egresos\GastosReporteController;
+use App\Http\Controllers\Api\graficas\GraficasController;
 use App\Http\Controllers\Api\reset_password\ResetPasswordController;
 use App\Http\Controllers\Api\tipo_ingresos\TipoIngresosController;
 use App\Http\Controllers\Api\ingresos\IngresosController;
@@ -40,6 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('articulos_espesificos/{etiqueta_id}/{categoria_id}', [ListaArticulosController::class, 'getArticulos']);
     Route::post('regla_aplicada_presupuesto', [ReglaAplicadaPresupuestoController::class, 'getReglaAplicadaPresupuesto']);
     Route::get('gasto_reporte_usuario/{usuario_id}', [GastosReporteController::class, 'getGastoReportePorUsuario']);
+    Route::post('grafica_gastos', [GraficasController::class, 'getGastosGrafica']);
+    Route::get('grafica_ingresos', [GraficasController::class, 'getIngresosGrafica']);
+    Route::post('gastos_x_periodo', [GastosController::class, 'getGastosPorperiodo']);
     Route::apiResource('gastos', GastosController::class);
     Route::apiResources(
         [

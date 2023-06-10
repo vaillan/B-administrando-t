@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
 use App\Models\presupuesto\Presupuesto;
-
+use Carbon\Carbon;
 class PresupuestoController extends Controller
 {
     /**
@@ -43,7 +43,9 @@ class PresupuestoController extends Controller
         $presupuestoReporte = collect();
         $presupuesto = Presupuesto::with(['ingreso' => function ($query) {
             $query->with(['tipoIngreso', 'periodo']);
-        }])->where('usuario_id', $id)->get()->groupBy('ingreso.periodo.periodo');
+        }])->where('usuario_id', $id)->get()->groupBy(function ($query) {
+            return Carbon::parse($query->ingreso->periodo->periodo)->format('Y');
+        });
 
         $presupuesto->each(function ($presupuesto, $presupuestoKey) use (&$presupuestoReporte) {
             $presupuestoReporte->push([
