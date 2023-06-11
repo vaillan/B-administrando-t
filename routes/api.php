@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\lista_articulos\EtiquetasController;
 use App\Http\Controllers\Api\lista_articulos\ListaArticulosController;
 use App\Http\Controllers\Api\presupuesto\PresupuestoController;
 use App\Http\Controllers\Api\reglas\ReglaAplicadaPresupuestoController;
+use App\Http\Controllers\Api\users\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,13 +45,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('grafica_gastos', [GraficasController::class, 'getGastosGrafica']);
     Route::get('grafica_ingresos', [GraficasController::class, 'getIngresosGrafica']);
     Route::post('gastos_x_periodo', [GastosController::class, 'getGastosPorperiodo']);
+    Route::post('imagen_usuario', [UserController::class, 'loadImagen']);
+
     Route::apiResource('gastos', GastosController::class);
     Route::apiResource('articulos', ListaArticulosController::class, ['index', 'show', 'store']);
+
     Route::apiResources(
         [
             'tipo_ingresos' => TipoIngresosController::class,
             'presupuesto' => PresupuestoController::class,
-            // 'articulos' => ListaArticulosController::class,
             'etiquetas' => EtiquetasController::class,
             'categorias' => CategoriasController::class,
         ],
