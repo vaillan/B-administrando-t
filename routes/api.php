@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('gastos_x_periodo', [GastosController::class, 'getGastosPorperiodo']);
     Route::post('imagen_usuario', [UserController::class, 'loadImagen']);
     Route::delete('delete_imagen_usuario/{user_id}', [UserController::class, 'deleteUserImage']);
+    Route::put('update_datos_usuario', [UserController::class, 'updateDatosUsuario']);
 
     Route::apiResource('gastos', GastosController::class);
     Route::apiResource('articulos', ListaArticulosController::class, ['index', 'show', 'store']);

@@ -30,7 +30,7 @@ class UserController extends Controller
             $user = User::with('tipoUsuario')->find($request->input('user_id'));
             //subir imagen
             if ($request->hasFile('image')) {
-                if(!empty($user->image)) {
+                if (!empty($user->image)) {
                     $this->deleteUserImage($user->id);
                 }
                 $image = $request->file('image');
@@ -58,6 +58,33 @@ class UserController extends Controller
             $user->url_image = null;
             $user->save();
             return response()->json(['type' => 'object', 'items' => ['msg' => 'Imagen borrada correctamente', 'user' => $user]]);
+        });
+        return $query;
+    }
+
+    public function updateDatosUsuario(Request $request)
+    {
+        $query = DB::transaction(function () use ($request) {
+            $user = User::with('tipoUsuario')->find($request->input('user_id'));
+            $id = $user->id;
+            $validator = Validator::make($request->all(), [
+                'user_id' => ['required'],
+                'name' => ['required', 'string'],
+                'last_name' => ['required', 'string'],
+                'email' => ['required', 'string', 'unique:users,email,' . $id],
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
+            }
+
+            $updatedDatosUsuario = collect($request->all())->filter(function ($item) {
+                return $item != null;
+            })->toArray();
+
+            $user->update($updatedDatosUsuario);
+
+            return response()->json(['type' => 'object', 'items' => ['msg' => 'Datos actualizados correctamente', 'user' => $user]]);
         });
         return $query;
     }
