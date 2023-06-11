@@ -190,6 +190,11 @@ class GastosController extends Controller
         return ['type' => 'success', 'items' => $diferenciaReglaAplicada];
     }
 
+    /**
+     * Obtiene gastos por periodo
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function getGastosPorperiodo(Request $request)
     {
         $grupoGastos = collect();

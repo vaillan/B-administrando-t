@@ -45,11 +45,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('grafica_ingresos', [GraficasController::class, 'getIngresosGrafica']);
     Route::post('gastos_x_periodo', [GastosController::class, 'getGastosPorperiodo']);
     Route::apiResource('gastos', GastosController::class);
+    Route::apiResource('articulos', ListaArticulosController::class, ['index', 'show', 'store']);
     Route::apiResources(
         [
             'tipo_ingresos' => TipoIngresosController::class,
             'presupuesto' => PresupuestoController::class,
-            'articulos' => ListaArticulosController::class,
+            // 'articulos' => ListaArticulosController::class,
             'etiquetas' => EtiquetasController::class,
             'categorias' => CategoriasController::class,
         ],
