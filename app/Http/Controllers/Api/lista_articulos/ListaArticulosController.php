@@ -55,7 +55,6 @@ class ListaArticulosController extends Controller
             );
 
             return response()->json(['type' => 'object', 'items' => ['msg' => 'Artículo creado correctamente'], 'name' => 'articulos']);
-
         });
         return $query;
     }
@@ -80,7 +79,22 @@ class ListaArticulosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $query = DB::transaction(function () use ($request, $id) {
+            $validator = Validator::make($request->all(), [
+                'categoria_id' => ['required'],
+                'etiqueta_id' => ['required'],
+                'nombre_articulo' => ['required', 'string', 'unique:App\Models\lista_articulos\ListaArticulo,nombre_articulo,' . $id],
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
+            }
+
+            $articulo = ListaArticulo::find($id);
+            $articulo->update($request->all());
+            return response()->json(['type' => 'object', 'items' => ['msg' => 'Artículo actualizado correctamente'], 'name' => 'articulos']);
+        });
+        return $query;
     }
 
     /**
@@ -104,13 +118,23 @@ class ListaArticulosController extends Controller
      */
     public function getArticulos($etiqueta_id, $categoria_id)
     {
+        $creadoPorAdministrador = 1;
+        $creadoPorUsuario = Auth::id();
         $articulos = ListaArticulo::with([
             'categoria' => function ($query) {
                 $query->select('id', 'nombre_categoria');
             },
         ])
             ->where('etiqueta_id', $etiqueta_id)
-            ->where('categoria_id', $categoria_id)->get();
+            ->where('categoria_id', $categoria_id)
+            ->whereIn('created_by', [$creadoPorAdministrador, $creadoPorUsuario])
+            ->get();
         return response()->json(['type' => 'array', 'items' => $articulos, 'name' => 'lista_articulos']);
+    }
+
+    public function getArticulosPorUsuario($user_id)
+    {
+        $lista = ListaArticulo::where('created_by', $user_id)->get();
+        return response()->json(['type' => 'array', 'items' => $lista, 'name' => 'lista_articulos']);
     }
 }
