@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\lista_articulos\ListaArticulo;
+use App\Models\egresos\Gasto;
 use Validator;
 
 class ListaArticulosController extends Controller
@@ -105,6 +106,9 @@ class ListaArticulosController extends Controller
      */
     public function destroy($id)
     {
+        if(Gasto::where('lista_articulo_id', $id)->exists()) {
+            return response()->json(['msg' => 'Validation Error.', 'params' => ['articulo' => 'El artículo a sido asignado a un gasto']], Response::HTTP_NOT_ACCEPTABLE);
+        }
         ListaArticulo::destroy($id);
         return response()->json(['type' => 'object', 'items' => ['msg' => 'Artículo eliminado correctamente'], 'name' => 'articulos']);
     }
