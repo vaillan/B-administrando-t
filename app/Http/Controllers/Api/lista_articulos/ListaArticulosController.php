@@ -105,9 +105,9 @@ class ListaArticulosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        ListaArticulo::destroy($id);
+        return response()->json(['type' => 'object', 'items' => ['msg' => 'Artículo eliminado correctamente'], 'name' => 'articulos']);
     }
-
 
     /**
      * Obtiene articulos por etiqueta y categoria

@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('lista_articulos_por_usuario/{user_id}', [ListaArticulosController::class, 'getArticulosPorUsuario']);
 
     Route::apiResource('gastos', GastosController::class);
-    Route::apiResource('articulos', ListaArticulosController::class, ['index', 'show', 'store', 'update']);
+    Route::apiResource('articulos', ListaArticulosController::class, ['index', 'show', 'store', 'update', 'destroy']);
 
     Route::apiResources(
         [
