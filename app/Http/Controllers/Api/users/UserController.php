@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api\users;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\egresos\Gasto;
+use App\Models\reglas\ReglaAplicadaPresupuesto;
+use App\Models\ingresos\Ingreso;
 use File;
 use Storage;
 use Validator;
@@ -88,4 +91,38 @@ class UserController extends Controller
         });
         return $query;
     }
+
+    public function deleteCuenta($user_id)
+    {
+        $query = DB::transaction(function () use ($user_id) {
+            $user = User::find($user_id);
+            $gatos = Gasto::with(['periodo', 'gastoReporte'])->where('created_by', $user->id)->get();
+            $reglas = ReglaAplicadaPresupuesto::where('created_by', $user->id)->get();
+            $ingresos = Ingreso::with(['periodo', 'presupuesto'])->where('created_by', $user->id)->get();
+            
+            foreach ($gatos as $gasto) {
+                $gasto->periodo->forceDelete();
+                $gasto->gastoReporte->forceDelete();
+                $gasto->forceDelete();
+            }
+
+            foreach ($reglas as $regla) {
+                $regla->forceDelete();
+            }
+
+            foreach ($ingresos as $ingreso) {
+                $ingreso->periodo->forceDelete();
+                $ingreso->presupuesto->forceDelete();
+                $ingreso->forceDelete();
+            }
+            $user->updated_at = date('Y-m-d H:i:m');
+            $user->deleted_at = date('Y-m-d H:i:m');
+            $user->email = $user->email.'_deleted_at_'.$user->deleted_at;
+            $user->save();
+            $user->tokens()->delete();
+            return response()->json(['type' => 'object', 'items' => ['msg' => 'Cuenta cancelada']]);
+        });
+        return $query;
+    }
+
 }

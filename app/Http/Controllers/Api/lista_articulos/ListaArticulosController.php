@@ -136,6 +136,9 @@ class ListaArticulosController extends Controller
         return response()->json(['type' => 'array', 'items' => $articulos, 'name' => 'lista_articulos']);
     }
 
+    /**
+     * 
+     */
     public function getArticulosPorUsuario($user_id)
     {
         $lista = ListaArticulo::where('created_by', $user_id)->get();

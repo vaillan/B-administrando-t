@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('delete_imagen_usuario/{user_id}', [UserController::class, 'deleteUserImage']);
     Route::put('update_datos_usuario', [UserController::class, 'updateDatosUsuario']);
     Route::get('lista_articulos_por_usuario/{user_id}', [ListaArticulosController::class, 'getArticulosPorUsuario']);
+    Route::delete('borrar_cuenta/{user_id}', [UserController::class, 'deleteCuenta']);
 
     Route::apiResource('gastos', GastosController::class);
     Route::apiResource('articulos', ListaArticulosController::class, ['index', 'show', 'store', 'update', 'destroy']);

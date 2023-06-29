@@ -24,7 +24,8 @@ class IngresosController extends Controller
      */
     public function index()
     {
-        //
+        $ingresos = Ingreso::where('created_by', Auth::id())->get();
+        return response()->json(['type' => 'array', 'items' => $ingresos, 'name' => 'ingresos']);
     }
 
     /**
