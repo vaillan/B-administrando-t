@@ -17,10 +17,6 @@ class CreateTipoIngresoTable extends Migration
             Schema::create('tipo_ingresos', function (Blueprint $table) {
                 $table->id();
                 $table->string('nombre_ingreso');
-
-                $table->foreignId('created_by')->constrained('users')->nullable();
-                $table->foreignId('updated_by')->constrained('users')->nullable();
-
                 $table->timestamps();
                 $table->softDeletes();
             });

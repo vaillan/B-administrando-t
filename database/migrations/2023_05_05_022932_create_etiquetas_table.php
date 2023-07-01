@@ -16,10 +16,6 @@ class CreateEtiquetasTable extends Migration
         Schema::create('etiquetas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_etiqueta');
-            
-            $table->foreignId('created_by')->constrained('users')->nullable();
-            $table->foreignId('updated_by')->constrained('users')->nullable();
-
             $table->timestamps();
             $table->softDeletes();
         });

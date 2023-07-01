@@ -24,8 +24,7 @@ class Ingreso extends Model
     protected $fillable = [
         'ingreso',
         'tipo_ingreso_id',
-        'created_by',
-        'updated_by',
+        'usuario_id',
     ];
 
     public function tipoIngreso()

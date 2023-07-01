@@ -24,8 +24,6 @@ class Presupuesto extends Model
         'total',
         'usuario_id',
         'ingreso_id',
-        'created_by',
-        'updated_by',
     ];
 
     /**

@@ -20,7 +20,5 @@ class Categoria extends Model
 
     protected $fillable = [
         'nombre_categoria',
-        'created_by',
-        'updated_by',
     ];
 }

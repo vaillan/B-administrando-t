@@ -24,7 +24,7 @@ class IngresosController extends Controller
      */
     public function index()
     {
-        $ingresos = Ingreso::where('created_by', Auth::id())->get();
+        $ingresos = Ingreso::where('usuario_id', Auth::id())->get();
         return response()->json(['type' => 'array', 'items' => $ingresos, 'name' => 'ingresos']);
     }
 
@@ -52,8 +52,7 @@ class IngresosController extends Controller
             $user_id = Auth::id();
             $ingresoData = $request->all();
             $ingresoData['ingreso'] = $montoIngreso;
-            $ingresoData['created_by'] = $user_id;
-            $ingresoData['updated_by'] = $user_id;
+            $ingresoData['usuario_id'] = $user_id;
 
             $ingreso = Ingreso::create($ingresoData);
 
@@ -160,8 +159,6 @@ class IngresosController extends Controller
             'total' => $ingreso->ingreso,
             'ingreso_id' => $ingreso->id,
             'usuario_id' => $user_id,
-            'created_by' => $user_id,
-            'updated_by' => $user_id,
         ];
         $presupuesto = Presupuesto::create($presupuestoData);
         return $presupuesto;

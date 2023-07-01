@@ -14,8 +14,6 @@ class TipoIngresosSeeder extends Seeder
         $this->tipo_ingresos = [
             [
                 'nombre_ingreso' => 'Sueldo/Honorarios/Prestaciones',
-                'created_by' => 1,
-                'updated_by' => 1,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],

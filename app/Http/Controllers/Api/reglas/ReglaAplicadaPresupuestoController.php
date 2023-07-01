@@ -74,7 +74,7 @@ class ReglaAplicadaPresupuestoController extends Controller
             $query->with(['reglaAplicadaPresupuesto' => function ($query) {
                 $query->with('regla');
             }]);
-        }])->where('created_by', $user_id)->get()->filter(function ($ingreso) use ($periodo) {
+        }])->where('usuario_id', $user_id)->get()->filter(function ($ingreso) use ($periodo) {
             return $ingreso->periodo->periodo === $periodo;
         });
 

@@ -88,8 +88,6 @@ class ListaArticulosSeeder extends Seeder
         $listas->each(function ($item, $key) {
             $etiqueta_id = DB::table('etiquetas')->insertGetId([
                 'nombre_etiqueta' => $key,
-                'created_by' => 1,
-                'updated_by' => 1,
                 'created_at' => date('Y-m-d H:i:m'),
                 'updated_at' => date('Y-m-d H:i:m'),
             ]);
@@ -101,8 +99,6 @@ class ListaArticulosSeeder extends Seeder
                 
                 $categoria_id = DB::table('categorias')->insertGetId([
                     'nombre_categoria' => $keyLista,
-                    'created_by' => 1,
-                    'updated_by' => 1,
                     'created_at' => date('Y-m-d H:i:m'),
                     'updated_at' => date('Y-m-d H:i:m'),
                 ]);
@@ -112,10 +108,9 @@ class ListaArticulosSeeder extends Seeder
                         'nombre_articulo' => $articulo,
                         'categoria_id' => $categoria_id,
                         'etiqueta_id' => $etiqueta_id,
-                        'created_by' => 1,
-                        'updated_by' => 1,
                         'created_at' => date('Y-m-d H:i:m'),
                         'updated_at' => date('Y-m-d H:i:m'),
+                        'default' => 1
                     ]);
                 });
             });

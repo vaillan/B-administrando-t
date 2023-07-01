@@ -17,10 +17,8 @@ class CreateIngresosTable extends Migration
             $table->id();
             $table->decimal('ingreso');
             $table->foreignId('tipo_ingreso_id')->constrained('tipo_ingresos')->nullable();
-
-            $table->foreignId('created_by')->constrained('users')->nullable();
-            $table->foreignId('updated_by')->constrained('users')->nullable();
-
+            $table->unsignedBigInteger('usuario_id')->nullable();
+            $table->foreign('usuario_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });

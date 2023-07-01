@@ -50,8 +50,8 @@ class ListaArticulosController extends Controller
                     'nombre_articulo' => $request->input('nombre_articulo'),
                     'categoria_id' => $request->input('categoria_id'),
                     'etiqueta_id' => $request->input('etiqueta_id'),
-                    'created_by' => $user_id,
-                    'updated_by' => $user_id,
+                    'usuario_id' => $user_id,
+                    'default' => $user_id,
                 ]
             );
 
@@ -122,8 +122,7 @@ class ListaArticulosController extends Controller
      */
     public function getArticulos($etiqueta_id, $categoria_id)
     {
-        $creadoPorAdministrador = 1;
-        $creadoPorUsuario = Auth::id();
+        $usuario_id = Auth::id();
         $articulos = ListaArticulo::with([
             'categoria' => function ($query) {
                 $query->select('id', 'nombre_categoria');
@@ -131,7 +130,7 @@ class ListaArticulosController extends Controller
         ])
             ->where('etiqueta_id', $etiqueta_id)
             ->where('categoria_id', $categoria_id)
-            ->whereIn('created_by', [$creadoPorAdministrador, $creadoPorUsuario])
+            ->whereIn('default', [1, $usuario_id])
             ->get();
         return response()->json(['type' => 'array', 'items' => $articulos, 'name' => 'lista_articulos']);
     }
@@ -141,7 +140,9 @@ class ListaArticulosController extends Controller
      */
     public function getArticulosPorUsuario($user_id)
     {
-        $lista = ListaArticulo::where('created_by', $user_id)->get();
+        $lista = ListaArticulo::where('usuario_id', $user_id)
+        ->where('default', $user_id)
+        ->get();
         return response()->json(['type' => 'array', 'items' => $lista, 'name' => 'lista_articulos']);
     }
 }

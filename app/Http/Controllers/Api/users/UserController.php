@@ -98,7 +98,7 @@ class UserController extends Controller
             $user = User::find($user_id);
             $gatos = Gasto::with(['periodo', 'gastoReporte'])->where('created_by', $user->id)->get();
             $reglas = ReglaAplicadaPresupuesto::where('created_by', $user->id)->get();
-            $ingresos = Ingreso::with(['periodo', 'presupuesto'])->where('created_by', $user->id)->get();
+            $ingresos = Ingreso::with(['periodo', 'presupuesto'])->where('usuario_id', $user->id)->get();
             
             foreach ($gatos as $gasto) {
                 $gasto->periodo->forceDelete();

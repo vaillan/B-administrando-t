@@ -16,24 +16,18 @@ class ReglasSeeder extends Seeder
             [
                 'porcentaje' => 50.00,
                 'nombre_regla' => 'Fijos/Deudas',
-                'created_by' => 1,
-                'updated_by' => 1,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
             [
                 'porcentaje' => 30.00,
                 'nombre_regla' => 'Gustos',
-                'created_by' => 1,
-                'updated_by' => 1,
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
             [
                 'porcentaje' => 20.00,
                 'nombre_regla' => 'Ahorros',
-                'created_by' => 1,
-                'updated_by' => 1,
                 'created_at' => $date,
                 'updated_at' => $date,
             ]

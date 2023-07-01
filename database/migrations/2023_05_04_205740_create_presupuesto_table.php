@@ -17,13 +17,10 @@ class CreatePresupuestoTable extends Migration
             Schema::create('presupuesto', function (Blueprint $table) {
                 $table->id();
                 $table->decimal('total', 13, 3);
-
-                $table->foreignId('usuario_id')->constrained('users')->nullable();
+                $table->unsignedBigInteger('usuario_id')->nullable();
+                $table->foreign('usuario_id')->references('id')->on('users');
+                
                 $table->foreignId('ingreso_id')->constrained('ingresos')->nullable();
-
-                $table->foreignId('created_by')->constrained('users')->nullable();
-                $table->foreignId('updated_by')->constrained('users')->nullable();
-
                 $table->timestamps();
                 $table->softDeletes();
             });

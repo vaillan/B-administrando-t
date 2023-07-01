@@ -17,10 +17,6 @@ class CreateReglasTable extends Migration
             Schema::create('reglas', function (Blueprint $table) {
                 $table->id();
                 $table->decimal('porcentaje', 13,3);
-
-                $table->foreignId('created_by')->constrained('users')->nullable();
-                $table->foreignId('updated_by')->constrained('users')->nullable();
-                
                 $table->timestamps();
                 $table->softDeletes();
             });

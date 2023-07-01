@@ -20,7 +20,5 @@ class Etiqueta extends Model
 
     protected $fillable = [
         'nombre_etiqueta',
-        'created_by',
-        'updated_by',
     ];
 }
