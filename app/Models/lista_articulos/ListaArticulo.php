@@ -24,7 +24,8 @@ class ListaArticulo extends Model
         'nombre_articulo',
         'categoria_id',
         'etiqueta_id',
-        'usuario_id'
+        'usuario_id',
+        'default',
     ];
 
     public function etiqueta()
