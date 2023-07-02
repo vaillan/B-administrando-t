@@ -109,7 +109,11 @@ class ListaArticulosController extends Controller
         if(Gasto::where('lista_articulo_id', $id)->exists()) {
             return response()->json(['msg' => 'Validation Error.', 'params' => ['articulo' => 'El artículo a sido asignado a un gasto']], Response::HTTP_NOT_ACCEPTABLE);
         }
-        ListaArticulo::destroy($id);
+        $articulo = ListaArticulo::find($id);
+        $articulo->nombre_articulo = $articulo->nombre_articulo.'_deleted_at_'.time();
+        $articulo->deleted_at = date('Y-m-d H:i:s');
+        $articulo->save();
+
         return response()->json(['type' => 'object', 'items' => ['msg' => 'Artículo eliminado correctamente'], 'name' => 'articulos']);
     }
 
