@@ -112,6 +112,7 @@ class IngresosController extends Controller
             if ($diferencia < 0) {
                 $diferencia = $diferencia * -1;
             }
+            $diferencia = $montoRealIngreso > $nuevoMontoIngreso ? -$diferencia : $diferencia;
             $ingreso->ingreso += $diferencia;
             $presupuesto->total += $diferencia;
             $ingreso->save();
