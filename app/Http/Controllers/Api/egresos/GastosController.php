@@ -225,12 +225,12 @@ class GastosController extends Controller
             );
         });
 
-        $paquetePerido = [
+        $paquetePeriodo = [
             'periodo' => $periodo,
             'total' => $grupoGastos->sum('total'),
             'gastos' => $grupoGastos,
         ];
 
-        return response()->json(['type' => 'object', 'items' => $paquetePerido, 'name' => 'gastos']);
+        return response()->json(['type' => 'object', 'items' => $paquetePeriodo, 'name' => 'gastos']);
     }
 }

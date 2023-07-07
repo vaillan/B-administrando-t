@@ -27,6 +27,15 @@ class Ingreso extends Model
         'usuario_id',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'ingreso' => 'float',
+    ];
+
     public function tipoIngreso()
     {
         return $this->hasOne(TipoIngreso::class, 'id', 'tipo_ingreso_id');
@@ -39,6 +48,6 @@ class Ingreso extends Model
 
     public function presupuesto()
     {
-        return $this->belongsTo(Presupuesto::class, 'id','ingreso_id');
+        return $this->belongsTo(Presupuesto::class, 'id', 'ingreso_id');
     }
 }
