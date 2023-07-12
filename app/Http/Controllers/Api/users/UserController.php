@@ -80,13 +80,13 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
             }
-
-            if($request->has('password') && !empty($request->input('password'))) {
-                $updatedDatosUsuario['password'] = bcrypt($request->input('password'));
-            }
             $updatedDatosUsuario = collect($request->all())->filter(function ($item) {
                 return $item != null;
             })->toArray();
+
+            if ($request->has('password') && !empty($request->input('password'))) {
+                $updatedDatosUsuario['password'] = bcrypt($request->input('password'));
+            }
 
             $user->update($updatedDatosUsuario);
 
@@ -102,7 +102,7 @@ class UserController extends Controller
             $gatos = Gasto::with(['periodo', 'gastoReporte'])->where('created_by', $user->id)->get();
             $reglas = ReglaAplicadaPresupuesto::where('created_by', $user->id)->get();
             $ingresos = Ingreso::with(['periodo', 'presupuesto'])->where('usuario_id', $user->id)->get();
-            
+
             foreach ($gatos as $gasto) {
                 $gasto->periodo->forceDelete();
                 $gasto->gastoReporte->forceDelete();
@@ -120,12 +120,11 @@ class UserController extends Controller
             }
             $user->updated_at = date('Y-m-d H:i:m');
             $user->deleted_at = date('Y-m-d H:i:m');
-            $user->email = $user->email.'_deleted_at_'.$user->deleted_at;
+            $user->email = $user->email . '_deleted_at_' . $user->deleted_at;
             $user->save();
             $user->tokens()->delete();
             return response()->json(['type' => 'object', 'items' => ['msg' => 'Cuenta cancelada']]);
         });
         return $query;
     }
-
 }
