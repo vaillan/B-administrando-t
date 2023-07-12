@@ -22,7 +22,6 @@ class UserController extends Controller
         $query = DB::transaction(function () use ($request) {
 
             $validator = Validator::make($request->all(), [
-                'user_id' => 'required',
                 'image' => 'required|image',
             ]);
 
@@ -30,7 +29,7 @@ class UserController extends Controller
                 return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
             }
 
-            $user = User::with('tipoUsuario')->find($request->input('user_id'));
+            $user = User::with('tipoUsuario')->find(Auth::id());
             //subir imagen
             if ($request->hasFile('image')) {
                 if (!empty($user->image)) {
