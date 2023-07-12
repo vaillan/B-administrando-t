@@ -21,15 +21,16 @@ class UserController extends Controller
     {
         $query = DB::transaction(function () use ($request) {
 
-            // $validator = Validator::make($request->all(), [
-            //     'image' => 'required|image',
-            // ]);
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required',
+                'image' => 'required|image',
+            ]);
 
-            // if ($validator->fails()) {
-            //     return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
-            // }
+            if ($validator->fails()) {
+                return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
+            }
 
-            $user = User::with('tipoUsuario')->find(Auth::id());
+            $user = User::with('tipoUsuario')->find($request->input('user_id'));
             //subir imagen
             if ($request->hasFile('image')) {
                 if (!empty($user->image)) {
@@ -47,7 +48,6 @@ class UserController extends Controller
                 $user->save();
                 return response()->json(['type' => 'object', 'items' => ['user' => $user, 'msg' => 'Imagen cargada correctamente']]);
             }
-            return response()->json(['msg' => 'Validation Error.', 'params' => ['img' => 'La imagen es requerida']], Response::HTTP_NOT_ACCEPTABLE);
         });
         return $query;
     }
