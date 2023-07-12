@@ -81,6 +81,9 @@ class UserController extends Controller
                 return response()->json(['msg' => 'Validation Error.', 'params' => $validator->errors()], Response::HTTP_NOT_ACCEPTABLE);
             }
 
+            if($request->has('password') && !empty($request->input('password'))) {
+                $updatedDatosUsuario['password'] = bcrypt($request->input('password'));
+            }
             $updatedDatosUsuario = collect($request->all())->filter(function ($item) {
                 return $item != null;
             })->toArray();
